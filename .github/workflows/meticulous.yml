@@ -1,0 +1,4 @@
+cd "D:\Python lessons+playwrtight\ai_project"
+git add frontend/index.html .github/workflows/meticulous.yml
+git commit -m "Set up Meticulous"
+git push
