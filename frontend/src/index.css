@@ -1,0 +1,323 @@
+:root {
+  --text: #6b6375;
+  --text-h: #08060d;
+  --bg: #fff;
+  --border: #e5e4e7;
+  --code-bg: #f4f3ec;
+  --accent: #aa3bff;
+  --accent-bg: rgba(170, 59, 255, 0.1);
+  --accent-border: rgba(170, 59, 255, 0.5);
+  --social-bg: rgba(244, 243, 236, 0.5);
+  --shadow:
+    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+
+  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --mono: ui-monospace, Consolas, monospace;
+
+  font: 18px/145% var(--sans);
+  letter-spacing: 0.18px;
+  color-scheme: light dark;
+  color: var(--text);
+  background: var(--bg);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  @media (max-width: 1024px) {
+    font-size: 16px;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text: #9ca3af;
+    --text-h: #f3f4f6;
+    --bg: #16171d;
+    --border: #2e303a;
+    --code-bg: #1f2028;
+    --accent: #c084fc;
+    --accent-bg: rgba(192, 132, 252, 0.15);
+    --accent-border: rgba(192, 132, 252, 0.5);
+    --social-bg: rgba(47, 48, 58, 0.5);
+    --shadow:
+      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+  }
+
+  #social .button-icon {
+    filter: invert(1) brightness(2);
+  }
+}
+
+body {
+  margin: 0;
+}
+
+#root {
+  width: 1126px;
+  max-width: 100%;
+  margin: 0 auto;
+  text-align: center;
+  border-inline: 1px solid var(--border);
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+h1,
+h2 {
+  font-family: var(--heading);
+  font-weight: 500;
+  color: var(--text-h);
+}
+
+h1 {
+  font-size: 56px;
+  letter-spacing: -1.68px;
+  margin: 32px 0;
+  @media (max-width: 1024px) {
+    font-size: 36px;
+    margin: 20px 0;
+  }
+}
+h2 {
+  font-size: 24px;
+  line-height: 118%;
+  letter-spacing: -0.24px;
+  margin: 0 0 8px;
+  @media (max-width: 1024px) {
+    font-size: 20px;
+  }
+}
+p {
+  margin: 0;
+}
+
+code,
+.counter {
+  font-family: var(--mono);
+  display: inline-flex;
+  border-radius: 4px;
+  color: var(--text-h);
+}
+
+code {
+  font-size: 15px;
+  line-height: 135%;
+  padding: 4px 8px;
+  background: var(--code-bg);
+}
+import { Link } from "react-router-dom";
+
+const PRODUCT = {
+  id: "backpack",
+  name: "Sauce Labs Backpack",
+  description:
+    "carry.allTheThings() with the sleek, streamlined Sly Pack that melds uncompromising style with unequaled laptop and tablet protection.",
+  price: "$29.99",
+};
+
+function InventoryPage({ cartItems, onAddToCart }) {
+  const isInCart = cartItems.length > 0;
+
+  return (
+    <main className="inventory-page">
+      <header className="store-header">
+        <h1>Meticulous Demo Store</h1>
+
+        <nav>
+          <Link to="/inventory.html">
+            Products
+          </Link>
+
+          <Link to="/cart.html">
+            Cart ({cartItems.length})
+          </Link>
+        </nav>
+      </header>
+
+      <section className="products">
+        <h2>Products</h2>
+
+        <article className="product-card">
+          <div
+            className="product-image"
+            aria-label="Backpack"
+          >
+            🎒
+          </div>
+
+          <div className="product-info">
+            <h3>{PRODUCT.name}</h3>
+
+            <p>{PRODUCT.description}</p>
+
+            <p className="product-price">
+              {PRODUCT.price}
+            </p>
+
+            <button
+              type="button"
+              onClick={() => onAddToCart(PRODUCT)}
+              disabled={isInCart}
+            >
+              {isInCart ? "Added to cart" : "Add to cart"}
+            </button>
+          </div>
+        </article>
+      </section>
+    </main>
+  );
+}
+
+export default InventoryPage;
+@'
+import { useState } from "react";
+import {
+  BrowserRouter,
+  Navigate,
+  Route,
+  Routes,
+} from "react-router-dom";
+
+import LoginPage from "./pages/LoginPage";
+import InventoryPage from "./pages/InventoryPage";
+import CartPage from "./pages/CartPage";
+
+function App() {
+  const [cartItems, setCartItems] = useState([]);
+
+  function addToCart(product) {
+    setCartItems([product]);
+  }
+
+  function removeFromCart() {
+    setCartItems([]);
+  }
+
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route
+          path="/"
+          element={<LoginPage />}
+        />
+
+        <Route
+          path="/inventory.html"
+          element={
+            <InventoryPage
+              cartItems={cartItems}
+              onAddToCart={addToCart}
+            />
+          }
+        />
+
+        <Route
+          path="/cart.html"
+          element={
+            <CartPage
+              cartItems={cartItems}
+              onRemoveFromCart={removeFromCart}
+            />
+          }
+        />
+
+        <Route
+          path="*"
+          element={<Navigate to="/" replace />}
+        />
+      </Routes>
+    </BrowserRouter>
+  );
+}
+
+export default App;
+@'
+
+/* Cart */
+
+.cart-page {
+  min-height: 100vh;
+}
+
+.cart-content {
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 0 24px;
+}
+
+.cart-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  padding: 30px;
+  margin-bottom: 20px;
+
+  background: white;
+  border-radius: 8px;
+
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+}
+
+.cart-item-info {
+  flex: 1;
+}
+
+.cart-item-info h3 {
+  margin-top: 0;
+  font-size: 28px;
+}
+
+.cart-item-info p {
+  line-height: 1.6;
+}
+
+.cart-item button {
+  padding: 12px 20px;
+
+  border: none;
+  border-radius: 4px;
+
+  background: #dc2626;
+  color: white;
+}
+
+.cart-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-top: 30px;
+}
+
+.cart-actions a {
+  color: #2563eb;
+  text-decoration: none;
+}
+
+.cart-actions button {
+  padding: 12px 30px;
+
+  border: none;
+  border-radius: 4px;
+
+  background: #2563eb;
+  color: white;
+
+  font-weight: bold;
+}
+
+.empty-cart {
+  padding: 40px;
+  background: white;
+  text-align: center;
+}
+
+.empty-cart a {
+  color: #2563eb;
+  text-decoration: none;
+}
